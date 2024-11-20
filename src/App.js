@@ -1,25 +1,37 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState, useEffect } from "react";
+import { oauth2 as SMART } from "fhirclient";
+import PADUACalculator from "./components/PADUACalculator";
 
-function App() {
+const App = () => {
+  const [patientData, setPatientData] = useState(null);
+  const [client, setClient] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    SMART.ready().then(client => {
+      setClient(client);
+      client.patient.read()
+        .then(patient => {
+          setPatientData(patient);
+          setIsLoading(false);
+        })
+        .catch(err => {
+          console.error(err);
+          setIsLoading(false);
+        });
+    }).catch(console.error);
+  }, []);
+
+  if (isLoading) {
+    return <div>Loading patient data...</div>;
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>PADUA Risk Calculator</h1>
+      <PADUACalculator patientData={patientData} client={client} />
     </div>
   );
-}
+};
 
 export default App;
