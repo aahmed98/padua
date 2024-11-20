@@ -6,7 +6,7 @@ const Launch = () => {
     SMART.authorize({
       clientId: "my_web_app",
       scope: "launch openid fhirUser patient/*.read",
-      redirectUri: "/app", // This is where your main app lives
+      redirectUri: "/app",
     });
   }, []);
 
