@@ -1,12 +1,12 @@
 // codes.js
 export const PADUA_CODES = {
     activeCancer: {
-        SNOMED: ["444814009"], // Malignant neoplastic disease
+        SNOMED: ["444814009"], // TEST
         ICD10: [], // Broad range of cancer ICD codes
     },
     previousVTE: {
         SNOMED: [], // History of DVT
-        ICD10: [],     // Chronic VTE
+        ICD10: ["I26", "I82.91", "O22.3"],
     },
     reducedMobility: {
         SNOMED: [], // Immobility syndrome
@@ -14,7 +14,7 @@ export const PADUA_CODES = {
     },
     knownThrombophilia: {
         SNOMED: [],  // Thrombophilia
-        ICD10: [],      // Specific ICD for thrombophilia
+        ICD10: ["D68.1", "D68.6"],      // Specific ICD for thrombophilia
     },
     recentTraumaSurgery: {
         SNOMED: [], // Recent surgery
@@ -23,11 +23,11 @@ export const PADUA_CODES = {
     elderlyAge: null, // Will check patient birthdate
     heartRespiratoryFailure: {
         SNOMED: [], // Heart failure
-        ICD10: [],        // Heart failure ICD codes
+        ICD10: ["I50", "J96"],        // Heart failure ICD codes
     },
     acuteMIIschemicStroke: {
         SNOMED: [], // Myocardial infarction
-        ICD10: [], // Ischemic stroke ICD codes
+        ICD10: ["I21", "I63", "I61", "I62.9"], // Ischemic stroke ICD codes
     },
     acuteInfectionRheumDisorder: {
         SNOMED: [], // Rheumatoid arthritis

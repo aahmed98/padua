@@ -47,10 +47,14 @@ const isCodesetValid = (codes) => {
     return false;
 }
 
+const startsWithAny = (codeList, code) => {
+    return codeList.some(prefix => code.startsWith(prefix));
+}
+
 /**
  * Check if a resource contains any of the specified codes.
  * @param {Object} codes - Object with SNOMED, ICD10, and/or RxNorm codes.
- * @param {Object} resource - FHIR resource (e.g., Condition or MedicationRequest).
+ * @param {Object} resource - Single FHIR resource (e.g., Condition or MedicationRequest).
  * @returns {Boolean} - True if the resource contains any matching codes.
  */
 const isCodeInResource = (codes, resource) => {
@@ -58,12 +62,16 @@ const isCodeInResource = (codes, resource) => {
 
     const { SNOMED, ICD10, RxNorm } = codes;
 
-    const codings = resource.code?.coding || resource.medicationCodeableConcept?.coding || [];
+    const codings = resource.code?.coding || resource.medicationCodeableConcept?.coding || [];  // List[code]
+
+    if (SNOMED && SNOMED.length > 0) {
+        fetchChildConcepts("59282003");
+    }
 
     return codings.some((coding) =>
-        (SNOMED && SNOMED.includes(coding.code)) ||
-        (ICD10 && ICD10.includes(coding.code)) ||
-        (RxNorm && RxNorm.includes(coding.code))
+        (SNOMED && startsWithAny(SNOMED, coding.code)) ||
+        (ICD10 && startsWithAny(ICD10, coding.code)) ||
+        (RxNorm && startsWithAny(RxNorm, coding.code))
     );
 };
 
@@ -76,39 +84,41 @@ export const deduceRiskFactors = async (client, patientData) => {
     const conditions = await fetchPatientConditions(client);
     const medications = await fetchPatientMedications(client);
 
+    // console.log(conditions);
+
     return {
-        activeCancer: isCodesetValid(PADUA_CODES.activeCancer) 
-            ? conditions.some((c) => isCodeInResource(PADUA_CODES.activeCancer, c))
+        activeCancer: isCodesetValid(PADUA_CODES.activeCancer)
+            ? conditions.some((c) => isCodeInResource(PADUA_CODES.activeCancer, c.resource))
             : null,
         previousVTE: isCodesetValid(PADUA_CODES.previousVTE)
-            ? conditions.some((c) => isCodeInResource(PADUA_CODES.previousVTE, c))
+            ? conditions.some((c) => isCodeInResource(PADUA_CODES.previousVTE, c.resource))
             : null,
         reducedMobility: isCodesetValid(PADUA_CODES.reducedMobility)
-            ? conditions.some((c) => isCodeInResource(PADUA_CODES.reducedMobility, c))
+            ? conditions.some((c) => isCodeInResource(PADUA_CODES.reducedMobility, c.resource))
             : null,
         knownThrombophilia: isCodesetValid(PADUA_CODES.knownThrombophilia)
-            ? conditions.some((c) => isCodeInResource(PADUA_CODES.knownThrombophilia, c))
+            ? conditions.some((c) => isCodeInResource(PADUA_CODES.knownThrombophilia, c.resource))
             : null,
         recentTraumaSurgery: isCodesetValid(PADUA_CODES.recentTraumaSurgery)
-            ? conditions.some((c) => isCodeInResource(PADUA_CODES.recentTraumaSurgery, c))
+            ? conditions.some((c) => isCodeInResource(PADUA_CODES.recentTraumaSurgery, c.resource))
             : null,
         elderlyAge: patientData.birthDate
             ? calculateAge(patientData.birthDate) >= 70
             : null,
         heartRespiratoryFailure: isCodesetValid(PADUA_CODES.heartRespiratoryFailure)
-            ? conditions.some((c) => isCodeInResource(PADUA_CODES.heartRespiratoryFailure, c))
+            ? conditions.some((c) => isCodeInResource(PADUA_CODES.heartRespiratoryFailure, c.resource))
             : null,
         acuteMIIschemicStroke: isCodesetValid(PADUA_CODES.acuteMIIschemicStroke)
-            ? conditions.some((c) => isCodeInResource(PADUA_CODES.acuteMIIschemicStroke, c))
+            ? conditions.some((c) => isCodeInResource(PADUA_CODES.acuteMIIschemicStroke, c.resource))
             : null,
         acuteInfectionRheumDisorder: isCodesetValid(PADUA_CODES.acuteInfectionRheumDisorder)
-            ? conditions.some((c) => isCodeInResource(PADUA_CODES.acuteInfectionRheumDisorder, c))
+            ? conditions.some((c) => isCodeInResource(PADUA_CODES.acuteInfectionRheumDisorder, c.resource))
             : null,
         obesity: isCodesetValid(PADUA_CODES.obesity)
-            ? conditions.some((c) => isCodeInResource(PADUA_CODES.obesity, c))
+            ? conditions.some((c) => isCodeInResource(PADUA_CODES.obesity, c.resource))
             : null,
         hormonalTreatment: isCodesetValid(PADUA_CODES.hormonalTreatment)
-            ? medications.some((m) => isCodeInResource(PADUA_CODES.hormonalTreatment, m))
+            ? medications.some((m) => isCodeInResource(PADUA_CODES.hormonalTreatment, m.resource))
             : null,
     };
 };
