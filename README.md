@@ -27,7 +27,7 @@ Follow these steps to run the app on your local machine:
 ### Step 1: Clone the repository
 
 ```bash
-git clone https://github.com/your-username/padua-risk-calculator.git
+git clone https://github.com/aahmed98/padua.git
 cd padua
 ```
 
@@ -43,9 +43,11 @@ npm install
 
 You need to set up the SMART on FHIR app by registering it with a client ID and configuring the authorization settings. For testing purposes, you can use the SMART sandbox.
 
-1. **Configure your `clientId` and `redirectUri`** in the React components:
+1. **Configure your `clientId`* and `redirectUri`** in the React components:
    - In `Launch.js`, the `clientId` should match the one registered with your SMART on FHIR environment.
    - The `redirectUri` will point to your local server (e.g., `http://localhost:3000/app`).
+
+*Skip setting `clientId` if you are querying public (i.e. sandbox) FHIR servers.
 
 2. **Launch the authorization flow** from the `Launch` component:
    - The `Launch` component triggers the SMART on FHIR authorization flow and redirects the user back to the `App` after successful authentication.

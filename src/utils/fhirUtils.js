@@ -64,10 +64,6 @@ const isCodeInResource = (codes, resource) => {
 
     const codings = resource.code?.coding || resource.medicationCodeableConcept?.coding || [];  // List[code]
 
-    if (SNOMED && SNOMED.length > 0) {
-        fetchChildConcepts("59282003");
-    }
-
     return codings.some((coding) =>
         (SNOMED && startsWithAny(SNOMED, coding.code)) ||
         (ICD10 && startsWithAny(ICD10, coding.code)) ||

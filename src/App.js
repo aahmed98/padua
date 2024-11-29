@@ -19,11 +19,12 @@ const App = () => {
     // extract patientId from URL
     const decodedToken = jwtDecode(code);
     const patientId = decodedToken?.context?.patient;
-
+    
     SMART.ready().then(client => {
       if (client.patient.id != patientId) {
-        // manually instantiate client if new patient is selected
-        // access token is still valid
+        // the JS library caches the client state for each launch 
+        // if a new patient is selected during the "same" launch sequence (e.g. pressing backspace),
+        // we manually instantiate a new client with the new patient ID and access token
         client = manuallyCreateClient(code, patientId);
       }
       setClient(client);
