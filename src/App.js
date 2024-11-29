@@ -21,7 +21,7 @@ const App = () => {
     const patientId = decodedToken?.context?.patient;
     
     SMART.ready().then(client => {
-      if (client.patient.id != patientId) {
+      if (client.patient.id !== patientId) {
         // the JS library caches the client state for each launch 
         // if a new patient is selected during the "same" launch sequence (e.g. pressing backspace),
         // we manually instantiate a new client with the new patient ID and access token
@@ -39,7 +39,7 @@ const App = () => {
         });
     }).catch(console.error);
 
-  }, []);
+  }, [code]);
 
   const manuallyCreateClient = (access_token, patient_id) => {
     const client = FHIR.client(
